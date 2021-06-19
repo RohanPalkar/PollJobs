@@ -2,12 +2,11 @@ package org.pollfor.api;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.pollfor.entity.PollInterval;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
-import static org.pollfor.entity.PollDefaults.*;
+import static org.pollfor.api.PollDefaults.*;
 
 public class PrePollAction<T> {
 
@@ -24,7 +23,7 @@ public class PrePollAction<T> {
 
     }
 
-    public PollAction holdIf(Predicate<? super T> entryCriteria){
+    /*public PollAction holdIf(Predicate<? super T> entryCriteria){
         this.entryCriteria = entryCriteria;
 
         LOGGER.trace("Using the default time-out and time-interval for polling the initial delay");
@@ -57,5 +56,5 @@ public class PrePollAction<T> {
                 initialDelayUnit.toMillis(initialDelay) : null;
         LOGGER.trace("Initial delay : {}ms", this.initialDelayMillis);
         return new PollAction(interval);
-    }
+    }*/
 }

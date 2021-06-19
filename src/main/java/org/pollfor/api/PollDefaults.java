@@ -1,4 +1,4 @@
-package org.pollfor.entity;
+package org.pollfor.api;
 
 import java.util.concurrent.TimeUnit;
 

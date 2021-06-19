@@ -1,0 +1,18 @@
+{
+  "timeOut": {
+    "value": 2,
+    "unit": "MINUTES"
+  },
+  "timeInterval": {
+    "value": 15,
+    "unit": "SECONDS"
+  },
+  "initialDelayTimeOut": {
+    "value": 1,
+    "unit": "MINUTES"
+  },
+  "initialDelayTimeInterval": {
+    "value": 15,
+    "unit": "SECONDS"
+  }
+}

@@ -4,8 +4,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 import org.pollfor.api.Poll;
-import org.pollfor.api.PollDefinition;
-import org.pollfor.entity.PollResult;
+import org.pollfor.api.PollD;
+import org.pollfor.api.PollResult;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
@@ -26,6 +26,9 @@ public class UsageTests {
 
     @Test //(description = "Timed Out Case")
     public void testPollingTimeOut() throws ExecutionException, InterruptedException {
+
+
+
         TestCounter tc = new TestCounter();
         tc.getStatus();
         CompletableFuture<String> c = CompletableFuture.supplyAsync(() -> tc.call());
@@ -97,10 +100,10 @@ public class UsageTests {
         CompletableFuture<String> c = CompletableFuture.supplyAsync(() -> tc.call());
 
         CompletableFuture<PollResult<String>> r
-                = CompletableFuture.supplyAsync(() -> new Poll()
+                = CompletableFuture.supplyAsync(() -> Poll
                 .pollFor(40, SECONDS)
                 .every(2, SECONDS)
-                .holdIf(s -> s.equals("IN PROGRESS"), () -> tc.getStatus())
+                .holdUntil(s -> s.equals("IN PROGRESS"), () -> tc.getStatus())
                 .until(s -> s.equals("COMPLETED"), () -> tc.getStatus()));
 
         CompletableFuture<Object> combinedFuture = CompletableFuture.anyOf(c,r);
@@ -120,10 +123,10 @@ public class UsageTests {
         CompletableFuture<String> c = CompletableFuture.supplyAsync(() -> tc.call());
 
         CompletableFuture<PollResult<String>> r
-                = CompletableFuture.supplyAsync(() -> new Poll()
+                = CompletableFuture.supplyAsync(() -> Poll
                 .pollFor(40, SECONDS)
                 .every(2, SECONDS)
-                .holdIf(s -> s.equals("IN PROGRESS"), () -> tc.getStatus(),1, MINUTES, 2, SECONDS)
+                .holdUntil(s -> s.equals("IN PROGRESS"), () -> tc.getStatus()) //1, MINUTES, 2, SECONDS
                 .until(s -> s.equals("COMPLETED"), () -> tc.getStatus()));
 
         CompletableFuture<Object> combinedFuture = CompletableFuture.anyOf(c,r);
@@ -140,8 +143,8 @@ public class UsageTests {
     @Test
     public void testAsyncPolling(){
         TestCounter tc = new TestCounter();
-        PollDefinition<String> def =
-                PollDefinition
+        PollD<String> def =
+                PollD
                         .pollTimes(4)
                         .every(5, SECONDS)
                         .until(s -> s.equals("COMPLETED"), () -> tc.getStatus());

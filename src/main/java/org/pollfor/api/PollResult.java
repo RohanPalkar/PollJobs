@@ -1,4 +1,4 @@
-package org.pollfor.entity;
+package org.pollfor.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
