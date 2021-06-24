@@ -2,18 +2,9 @@ package org.pollfor.tests;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.jupiter.api.Test;
-import org.pollfor.api.Poll;
-import org.pollfor.api.PollD;
-import org.pollfor.api.PollResult;
 
 import java.util.concurrent.Callable;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.function.Predicate;
-
-import static java.util.concurrent.TimeUnit.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 public class UsageTests {
 
@@ -24,7 +15,7 @@ public class UsageTests {
     private static Predicate<Integer> predOn = i -> i == 100;
     private static Predicate<Integer> predtimeOut = i -> i == 150;
 
-    @Test //(description = "Timed Out Case")
+    /*@Test //(description = "Timed Out Case")
     public void testPollingTimeOut() throws ExecutionException, InterruptedException {
 
 
@@ -148,7 +139,7 @@ public class UsageTests {
                         .pollTimes(4)
                         .every(5, SECONDS)
                         .until(s -> s.equals("COMPLETED"), () -> tc.getStatus());
-    }
+    }*/
 
     public static class TestCounter implements Callable<String> {
 

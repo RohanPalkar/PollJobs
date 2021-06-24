@@ -1,4 +1,4 @@
-package org.pollfor.common;
+package org.pollfor.discard;
 
 public class ConfigConstants {
 

@@ -1,4 +1,4 @@
-package org.pollfor.api;
+package org.pollfor.discard;
 
 import java.util.concurrent.TimeUnit;
 

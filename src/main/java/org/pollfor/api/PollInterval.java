@@ -1,23 +1,45 @@
 package org.pollfor.api;
 
+import org.pollfor.entities.TimeValue;
+
 import java.util.concurrent.TimeUnit;
 
 public class PollInterval {
 
-    final PollConfig pollConfig;
+    private final String pollName;
+    private final TimeValue pollTimeValue;
+    private final Integer pollCount;
 
-    public PollInterval(Integer timeOut, TimeUnit timeOutUnit) {
-        this.pollConfig = new PollConfig();
-        pollConfig.setTimeOut(new PollConfig.TimeValue(timeOut, timeOutUnit));
+    public PollInterval(Integer timeOut, TimeUnit timeOutUnit, String name) {
+        this.pollName = name;
+        this.pollCount = null;
+        this.pollTimeValue = TimeValue.create()
+                                        .setValue(timeOut)
+                                        .setUnit(timeOutUnit)
+                                        .build();
+
+
     }
 
-    public PollInterval(Integer pollCount) {
-        this.pollConfig = new PollConfig();
-        this.pollConfig.setIterations(pollCount);
+    public PollInterval(Integer pollCount, String name) {
+        this.pollName = name;
+        this.pollCount = pollCount;
+        this.pollTimeValue = null;
     }
 
     public PollAction every(Integer timeInterval, TimeUnit timeIntervalUnit){
-        this.pollConfig.setTimeInterval(new PollConfig.TimeValue(timeInterval, timeIntervalUnit));
-        return new PollAction(this.pollConfig);
+        TimeValue pollIntervalTimeValue = TimeValue.create()
+                                                    .setValue(timeInterval)
+                                                    .setUnit(timeIntervalUnit)
+                                                    .build();
+
+        PollJob pollJob = PollJob.createJob()
+                                    .setName(this.pollName)
+                                    .setIterations(this.pollCount)
+                                    .setTimeOut(this.pollTimeValue)
+                                    .setTimeInterval(pollIntervalTimeValue)
+                                    .build();
+
+        return new PollAction(pollJob);
     }
 }

@@ -1,9 +1,11 @@
-package org.pollfor.api;
+package org.pollfor.discard;
+
+import org.pollfor.entities.PollConfig;
 
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-class InternalPollDef {
+class PollDefinition {
 
     private final PollConfig pollConfig;
 
@@ -21,7 +23,7 @@ class InternalPollDef {
 
     private Supplier<?>[] exitActions;
 
-    private InternalPollDef(InternalPollDefBuilder builder){
+    private PollDefinition(DefinitionBuilder builder){
         this.pollConfig = builder.pollConfig;
         this.timeOutMillis = builder.timeOutMillis;
         this.timeIntervalMillis = builder.timeIntervalMillis;
@@ -31,11 +33,11 @@ class InternalPollDef {
         this.exitActions = builder.exitActions;
     }
 
-    public static InternalPollDefBuilder create(){
-        return new InternalPollDefBuilder();
+    public static DefinitionBuilder create(){
+        return new DefinitionBuilder();
     }
 
-    public static class InternalPollDefBuilder{
+    public static class DefinitionBuilder{
 
         private PollConfig pollConfig;
         private Long timeOutMillis;
@@ -45,43 +47,43 @@ class InternalPollDef {
         private Predicate<?>[] exitCriteria;
         private Supplier<?>[] exitActions;
 
-        public InternalPollDefBuilder setPollConfig(PollConfig pollConfig){
+        public DefinitionBuilder setPollConfig(PollConfig pollConfig){
             this.pollConfig = pollConfig;
             return this;
         }
 
-        public InternalPollDefBuilder setTimeOutMillis(Long timeOutMillis){
+        public DefinitionBuilder setTimeOutMillis(Long timeOutMillis){
             this.timeOutMillis = timeOutMillis;
             return this;
         }
 
-        public InternalPollDefBuilder setTimeIntervalMillis(Long timeIntervalMillis){
+        public DefinitionBuilder setTimeIntervalMillis(Long timeIntervalMillis){
             this.timeIntervalMillis = timeIntervalMillis;
             return this;
         }
 
-        public InternalPollDefBuilder setEntryCriterion(Predicate<?> entryCriterion){
+        public DefinitionBuilder setEntryCriterion(Predicate<?> entryCriterion){
             this.entryCriterion = entryCriterion;
             return this;
         }
 
-        public InternalPollDefBuilder setEntryAction(Supplier<?> entryAction){
+        public DefinitionBuilder setEntryAction(Supplier<?> entryAction){
             this.entryAction = entryAction;
             return this;
         }
 
-        public InternalPollDefBuilder setExitCriteria(Predicate<?>[] exitCriteria){
+        public DefinitionBuilder setExitCriteria(Predicate<?>[] exitCriteria){
             this.exitCriteria = exitCriteria;
             return this;
         }
 
-        public InternalPollDefBuilder setExitActions(Supplier<?>[] exitActions){
+        public DefinitionBuilder setExitActions(Supplier<?>[] exitActions){
             this.exitActions = exitActions;
             return this;
         }
 
-        public InternalPollDef build(){
-            return new InternalPollDef(this);
+        public PollDefinition build(){
+            return new PollDefinition(this);
         }
     }
 

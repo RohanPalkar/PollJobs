@@ -1,12 +1,10 @@
-package org.pollfor.api;
+package org.pollfor.discard;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.pollfor.api.PollInterval;
 
-import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
-
-import static org.pollfor.api.PollDefaults.*;
 
 public class PrePollAction<T> {
 

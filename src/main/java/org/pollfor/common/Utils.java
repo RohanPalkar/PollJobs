@@ -1,17 +1,20 @@
 package org.pollfor.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.core.lookup.StrSubstitutor;
-import org.pollfor.api.PollConfig;
+import org.pollfor.entities.PollConfig;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalTime;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Utils {
 
@@ -62,5 +65,29 @@ public class Utils {
         }
 
         return null;
+    }
+
+    private static final ThreadLocal<SimpleDateFormat> format =
+            ThreadLocal.withInitial(() -> new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS", Locale.US));
+
+    public static String debugStamp(){
+        return format.get().format(new Date()).split(" ")[1];
+    }
+    public static synchronized void println(String message, String... tags){
+        if(System.getenv("POLL_DEBUG") != null &&
+                System.getenv("POLL_DEBUG").equalsIgnoreCase("true")){
+
+            List<String> fishTags = new ArrayList<>();
+            fishTags.add(debugStamp());
+            fishTags.add("T-"+Thread.currentThread().getId());
+            fishTags.addAll(Stream.of(tags).collect(Collectors.toList()));
+
+            String tagString = fishTags
+                                    .stream()
+                                    .map(t -> "["+t+"]")
+                                    .collect(Collectors.joining());
+
+            System.out.println(tagString+" "+message);
+        }
     }
 }

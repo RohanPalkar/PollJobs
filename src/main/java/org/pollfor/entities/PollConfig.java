@@ -1,11 +1,9 @@
-package org.pollfor.api;
+package org.pollfor.entities;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.util.concurrent.TimeUnit;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY,
@@ -68,51 +66,6 @@ public class PollConfig {
                     .writeValueAsString(this);
         } catch (com.fasterxml.jackson.core.JsonProcessingException j) {
             throw new RuntimeException(j);
-        }
-    }
-
-    public static class TimeValue {
-
-        private Integer value;
-        private TimeUnit unit;
-
-        public TimeValue(){}
-
-        public TimeValue(Integer value, TimeUnit unit) {
-            this.value = value;
-            this.unit = unit;
-        }
-
-        public Integer getValue() {
-            return value;
-        }
-
-        public void setValue(Integer value) {
-            this.value = value;
-        }
-
-        public TimeUnit getUnit() {
-            return unit;
-        }
-
-        public void setUnit(TimeUnit unit) {
-            this.unit = unit;
-        }
-
-        @JsonIgnore
-        public String getSummary(){
-            return String.join(" ", value.toString(), unit.toString());
-        }
-
-        @Override
-        public String toString() {
-            try{
-                return new ObjectMapper()
-                        .writerWithDefaultPrettyPrinter()
-                        .writeValueAsString(this);
-            } catch (com.fasterxml.jackson.core.JsonProcessingException j) {
-                throw new RuntimeException(j);
-            }
         }
     }
 }
