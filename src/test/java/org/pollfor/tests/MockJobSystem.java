@@ -8,6 +8,7 @@ public class MockJobSystem implements Callable<String> {
 
     private int counter = 1;
     private String status = "OPEN";
+    private Boolean isJobCancelled = false;
 
     public void reset(){
         counter = 1;
@@ -18,8 +19,12 @@ public class MockJobSystem implements Callable<String> {
     }
 
     public synchronized String getStatus(){
-        println("GetStatus: "+status, "counter:" + String.valueOf(counter));
+        println("GetStatus: "+status, "TEST","counter:" + String.valueOf(counter));
         return status;
+    }
+
+    public void cancelJob(){
+        this.isJobCancelled = true;
     }
 
 
@@ -33,8 +38,8 @@ public class MockJobSystem implements Callable<String> {
     public String call()  {
         int iterations = 20;
         long start = System.currentTimeMillis();
-        for(; counter < iterations && !Thread.interrupted(); ++counter){
-            println("Status : "+status, "Pre", "counter:" + String.valueOf(counter));
+        for(; counter < iterations && !Thread.interrupted() && !isJobCancelled; ++counter){
+            println("Status : "+status, "TEST","counter:" + counter, isJobCancelled.toString());
             try {
                 if(counter >= 15)
                     status = "COMPLETED";
@@ -43,13 +48,18 @@ public class MockJobSystem implements Callable<String> {
                 else if(counter >= 2)
                     status = "SUBMITTED";
                 long sleepInterval = 2000;
+
+                if(isJobCancelled){
+                    println("Cancelling job");
+                    break;
+                }
                 Thread.sleep(sleepInterval);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             long end = System.currentTimeMillis();
             int seconds = (int) ((end - start) / 1000);
-            println("Status : "+status, "Post", "counter:" + String.valueOf(counter), seconds + " sec elapsed");
+            println("Status : "+status, "TEST","counter:" + counter, seconds + " sec elapsed", isJobCancelled.toString());
         }
         return status;
     }

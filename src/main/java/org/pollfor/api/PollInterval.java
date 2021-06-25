@@ -42,4 +42,10 @@ public class PollInterval {
 
         return new PollAction(pollJob);
     }
+
+    public PollAction defaultInterval(){
+        return new PollAction(PollJob.createJob()
+                                    .setName(this.pollName)
+                                    .build());
+    }
 }

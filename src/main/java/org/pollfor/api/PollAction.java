@@ -62,7 +62,7 @@ public class PollAction {
         List<PollResult.PollInfo<T>> pollResults = this.pollJob.executePollJob(serviceType);
 
         PollResult<T> result = new PollResult<>();
-        result.setDelayResult(delayResult.get(0));
+        result.setDelayResult(delayResult != null ? delayResult.get(0) : null);
         result.setPollResults(pollResults);
         result.setPollStatus(determineStatus(pollResults));
         return result;

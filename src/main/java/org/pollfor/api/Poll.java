@@ -21,4 +21,8 @@ public class Poll {
     public PollInterval pollFor(Integer pollIterations){
         return new PollInterval(pollIterations, this.pollName);
     }
+
+    public PollInterval pollWithDefaults(){
+        return new PollInterval(null, this.pollName);
+    }
 }

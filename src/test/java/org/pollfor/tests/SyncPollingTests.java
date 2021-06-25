@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SyncPollingTests {
 
     @Test
-    public void basicSyncPollingTest1() throws InterruptedException, ExecutionException {
+    public void basicSyncPollingTest1() {
         MockJobSystem tc = new MockJobSystem();
         CompletableFuture<String> c = CompletableFuture.supplyAsync(tc::call);
 
@@ -25,13 +25,17 @@ public class SyncPollingTests {
 
         System.out.println(p);
 
+        tc.cancelJob();
+
+        System.out.println(c.isCancelled());
+
         assertTrue(p.getPollResult().isTimedOut(), "Failed : Timed-Out check");
-        assertEquals(p.getPollResult().getPollIterations(), 5, "Failed : No. of iterations check");
-        assertEquals(p.getPollResult().getLastResponse(), "SUBMITTED", "Failed : Last response check");
+        assertEquals(5, p.getPollResult().getPollIterations(), "Failed : No. of iterations check");
+        assertEquals("SUBMITTED", p.getPollResult().getLastResponse(), "Failed : Last response check");
     }
 
     @Test
-    public void basicSyncPollingTest2() throws InterruptedException, ExecutionException {
+    public void basicSyncPollingTest2() {
         MockJobSystem tc = new MockJobSystem();
         CompletableFuture<String> c = CompletableFuture.supplyAsync(tc::call);
 
@@ -43,8 +47,10 @@ public class SyncPollingTests {
 
         System.out.println(p);
 
+        tc.cancelJob();
+
         assertTrue(p.getPollResult().isTimedOut(), "Failed : Timed-Out check");
-        assertEquals(p.getPollResult().getPollIterations(), 5, "Failed : No. of iterations check");
-        assertEquals(p.getPollResult().getLastResponse(), "SUBMITTED", "Failed : Last response check");
+        assertEquals(6, p.getPollResult().getPollIterations(), "Failed : No. of iterations check");
+        assertEquals("SUBMITTED", p.getPollResult().getLastResponse(), "Failed : Last response check");
     }
 }

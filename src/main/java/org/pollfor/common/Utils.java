@@ -73,13 +73,14 @@ public class Utils {
     public static String debugStamp(){
         return format.get().format(new Date()).split(" ")[1];
     }
+
     public static synchronized void println(String message, String... tags){
         if(System.getenv("POLL_DEBUG") != null &&
                 System.getenv("POLL_DEBUG").equalsIgnoreCase("true")){
 
             List<String> fishTags = new ArrayList<>();
             fishTags.add(debugStamp());
-            fishTags.add("T-"+Thread.currentThread().getId());
+            fishTags.add("Thread-"+Thread.currentThread().getId());
             fishTags.addAll(Stream.of(tags).collect(Collectors.toList()));
 
             String tagString = fishTags

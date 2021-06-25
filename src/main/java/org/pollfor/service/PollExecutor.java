@@ -49,6 +49,7 @@ abstract class PollExecutor<T> {
                                                      TimeValue timeInterval,
                                                      long timeIntervalInMillis){
 
+        println("Polling with TimeOut: "+timeOutInMillis+" ms, TimeInterval: "+timeIntervalInMillis+" ms");
         PollResult.PollInfo<T> pollInfo = new PollResult.PollInfo<>();
 
         AtomicInteger counter = new AtomicInteger(0);
@@ -67,11 +68,10 @@ abstract class PollExecutor<T> {
 
             // Performing the action
             response = (T) action.get();
-            if(response == null)
-                break;
 
             // Testing the exit-criteria predicate to determine to continue or not.
             continuePoll = !criterion.test(response);
+            println("Continue Poll: "+continuePoll, "i"+counter);
 
             // Checking for thread interruption
             if(Thread.interrupted())
@@ -79,7 +79,7 @@ abstract class PollExecutor<T> {
 
             // Determining the remaining time for polling
             idto = deadline - System.currentTimeMillis();
-            println(idto/1000 + " seconds left", "toPoll:" + continuePoll, idto + "ms left");
+            println("Remaining-Time: "+idto+" ms", "i"+counter);
 
             // If we need to continue for poll, we wait, else we break;
             if(continuePoll)

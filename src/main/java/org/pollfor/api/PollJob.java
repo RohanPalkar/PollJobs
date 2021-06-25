@@ -29,23 +29,18 @@ public class PollJob {
     private Supplier<?>[] exitActions;
 
     private PollJob(PollJobBuilder builder){
+        PollConfig pollConfig = Utils.getPollConfig();
+        boolean useDefaults = builder.iterations == null && builder.timeOut == null;
+
         this.name = builder.name;
         this.iterations = builder.iterations;
-        this.timeOut = builder.timeOut;
-        this.timeInterval = builder.timeInterval;
+        this.timeOut = useDefaults ? pollConfig.getTimeOut() : builder.timeOut;
+        this.timeInterval = useDefaults ? pollConfig.getTimeInterval() : builder.timeInterval;
 
-        PollConfig pollConfig = Utils.getPollConfig();
-        TimeValue timeInterval = pollConfig.getTimeInterval();
-        this.timeIntervalMillis = timeInterval != null ?
-                timeInterval.getUnit().toMillis(timeInterval.getValue()) :
-                TIME_INTERVAL.getTimeUnitValue().toMillis(TIME_INTERVAL.getTimeValue());
+        this.timeIntervalMillis = this.timeInterval.getUnit().toMillis(this.timeInterval.getValue());
 
-        TimeValue timeOut = pollConfig.getTimeOut();
-        this.timeOutMillis = timeOut != null ?
-                timeOut.getUnit().toMillis(timeOut.getValue()) :
-                pollConfig.getIterations() != null ?
-                        timeIntervalMillis * pollConfig.getIterations() :
-                        TIME_OUT.getTimeUnitValue().toMillis(TIME_OUT.getTimeValue());
+        this.timeOutMillis = this.iterations != null ? this.timeIntervalMillis * this.iterations :
+                            this.timeOut.getUnit().toMillis(this.timeOut.getValue());
     }
 
     public static PollJobBuilder createJob(){
