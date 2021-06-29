@@ -1,4 +1,4 @@
-# PollFor
+# PollJobs
 
 #### Java API for Synchronous and Asynchronous Polling
 

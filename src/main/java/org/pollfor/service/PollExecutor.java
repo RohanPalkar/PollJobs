@@ -1,6 +1,8 @@
 package org.pollfor.service;
 
 import com.google.common.collect.ImmutableMap;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.pollfor.api.PollResult;
 import org.pollfor.common.Utils;
 import org.pollfor.entities.TimeValue;
@@ -9,6 +11,7 @@ import java.time.LocalTime;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -16,21 +19,25 @@ import static org.pollfor.common.Utils.println;
 
 abstract class PollExecutor<T> {
 
+    private static final Logger LOGGER = LogManager.getLogger(PollExecutor.class);
+
     private static final Boolean DEFAULT_CONITNUE_POLL_FLAG = true;
 
-    private static final Predicate<Long> isTimedOutMillis = t -> t <= 0L;
+    private static final Predicate<Long> isTimedOut = t -> t <= 0L;
 
-    private static final Predicate<Long> isTimedOutSeconds = t -> t / 1000 <= 0L;
+    private static final Function<Long, Long> toMillis = t -> t;
 
-    private static final Predicate<Long> isTimedOutMinutes = t -> t / 60000 <= 0L;
+    private static final Function<Long, Long> toSeconds = t -> t / 1000;
 
-    private static final Predicate<Long> isTimedOutHours = t -> t / 360000 <= 0L;
+    private static final Function<Long, Long> toMinutes = t -> t / 60000;
 
-    private static final Map<TimeUnit, Predicate<Long>> isTimedOut = ImmutableMap.of(
-            TimeUnit.MILLISECONDS, isTimedOutMillis,
-            TimeUnit.SECONDS, isTimedOutSeconds,
-            TimeUnit.MINUTES, isTimedOutMinutes,
-            TimeUnit.HOURS, isTimedOutHours
+    private static final Function<Long, Long> toHours = t -> t / 360000;
+
+    private static final Map<TimeUnit, Function<Long, Long>> timeUnitMap = ImmutableMap.of(
+            TimeUnit.MILLISECONDS, toMillis,
+            TimeUnit.SECONDS, toSeconds,
+            TimeUnit.MINUTES, toMinutes,
+            TimeUnit.HOURS, toHours
     );
 
     protected void hardAwait(Long milliSeconds){
@@ -49,7 +56,10 @@ abstract class PollExecutor<T> {
                                                      TimeValue timeInterval,
                                                      long timeIntervalInMillis){
 
-        println("Polling with TimeOut: "+timeOutInMillis+" ms, TimeInterval: "+timeIntervalInMillis+" ms");
+        LOGGER.debug("Polling with time-out: {} ms, time-interval: {} ms",
+                timeOutInMillis, timeIntervalInMillis);
+        println("Polling with time-out: "+timeOutInMillis+" ms, time-interval: "+timeIntervalInMillis+" ms");
+
         PollResult.PollInfo<T> pollInfo = new PollResult.PollInfo<>();
 
         AtomicInteger counter = new AtomicInteger(0);
@@ -58,20 +68,22 @@ abstract class PollExecutor<T> {
         long idto = timeOutInMillis;
         long deadline = System.currentTimeMillis() + idto;
 
-        Predicate<Long> timeOutCheck = isTimedOut.get(timeOut.getUnit());
+        Function<Long, Long> convert = timeUnitMap.get(timeOut.getUnit());
 
         T response = null;
         Boolean continuePoll = DEFAULT_CONITNUE_POLL_FLAG;
-        while(continuePoll && !timeOutCheck.test(idto)){
+        while(continuePoll && !isTimedOut.test(convert.apply(idto))){
             // Iteration as per the counter
             counter.incrementAndGet();
 
             // Performing the action
+            println("Performing the action", "iteration:"+counter);
             response = (T) action.get();
 
             // Testing the exit-criteria predicate to determine to continue or not.
+            println("Testing the exit-criteria", "iteration:"+counter);
             continuePoll = !criterion.test(response);
-            println("Continue Poll: "+continuePoll, "i"+counter);
+            //println("Continue Poll: "+continuePoll, "i"+counter);
 
             // Checking for thread interruption
             if(Thread.interrupted())
@@ -79,12 +91,13 @@ abstract class PollExecutor<T> {
 
             // Determining the remaining time for polling
             idto = deadline - System.currentTimeMillis();
-            println("Remaining-Time: "+idto+" ms", "i"+counter);
+            println("Remaining-Time: "+idto+" ms", "iteration:"+counter);
 
             // If we need to continue for poll, we wait, else we break;
-            if(continuePoll)
+            if(continuePoll && !isTimedOut.test(convert.apply(idto))) {
+                println("Hard wait for "+timeIntervalInMillis+" ms", "iteration:"+counter);
                 hardAwait(timeIntervalInMillis);
-            else
+            } else
                 break;
 
             // Checking for thread interruption
@@ -92,12 +105,13 @@ abstract class PollExecutor<T> {
                 return null;
         }
 
+        println("Done, preparing result", "iteration:"+counter);
         // Setting the response and iteration counter to the result
         pollInfo.setLastResponse(response);
         pollInfo.setPollIterations(counter.intValue());
 
         // Determining the timed-out status.
-        pollInfo.setTimedOut(timeOutCheck.test(idto));
+        pollInfo.setTimedOut(isTimedOut.test(convert.apply(idto)));
 
         // Determining the elapsed-time
         LocalTime fendTime = LocalTime.now();

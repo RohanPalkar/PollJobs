@@ -2,8 +2,11 @@ package org.pollfor.tests;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.pollfor.api.Poll;
+import org.pollfor.api.PollResult;
 
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
 public class UsageTests {
@@ -14,6 +17,14 @@ public class UsageTests {
     private static Predicate<String> pred = s -> s.equals("Hello");
     private static Predicate<Integer> predOn = i -> i == 100;
     private static Predicate<Integer> predtimeOut = i -> i == 150;
+
+
+    public static void main(String[] args) {
+        long t = -5003;
+        long r = t / 1000;
+        boolean f = r <= 0l;
+        System.out.println(f);
+    }
 
     /*@Test //(description = "Timed Out Case")
     public void testPollingTimeOut() throws ExecutionException, InterruptedException {

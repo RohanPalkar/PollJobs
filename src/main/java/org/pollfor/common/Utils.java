@@ -80,7 +80,7 @@ public class Utils {
 
             List<String> fishTags = new ArrayList<>();
             fishTags.add(debugStamp());
-            fishTags.add("Thread-"+Thread.currentThread().getId());
+            fishTags.add(   Thread.currentThread().getName());
             fishTags.addAll(Stream.of(tags).collect(Collectors.toList()));
 
             String tagString = fishTags

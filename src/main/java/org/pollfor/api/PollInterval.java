@@ -46,6 +46,8 @@ public class PollInterval {
     public PollAction defaultInterval(){
         return new PollAction(PollJob.createJob()
                                     .setName(this.pollName)
+                                    .setIterations(this.pollCount)
+                                    .setTimeOut(this.pollTimeValue)
                                     .build());
     }
 }

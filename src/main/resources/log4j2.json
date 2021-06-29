@@ -1,0 +1,58 @@
+{
+  "configuration": {
+    "name": "RollingConfig",
+    "status": "INFO",
+    "properties": {
+      "property": {
+        "name": "log_dir",
+        "value": "$${env:LOG_DIR:-}logs"
+      }
+    },
+    "Appenders": {
+      "appender": [
+        {
+          "type": "RollingFile",
+          "name": "DebugRollingFile",
+          "fileName": "${log_dir}/polljobs.log",
+          "filePattern": "${log_dir}/polljobs_%d{MM-dd-yy-HH-mm-ss}_archive_%i.log.gz",
+          "PatternLayout": {
+            "pattern": "%d{yyyy-MM-dd HH:mm:ss}{GMT+0} [%-5p][Thread-%tid] - %m%n"
+          },
+          "Policies": {
+            "SizeBasedTriggeringPolicy": {
+              "size": "10 MB"
+            }
+          },
+          "DefaultRolloverStrategy": {
+            "max": "20"
+          },
+          "ThresholdFilter": {
+            "level": "debug"
+          }
+        }
+      ]
+    },
+    "Loggers": {
+      "logger": [
+        {
+          "name": "PollJobLogger",
+          "level": "debug",
+          "additivity": "false",
+          "AppenderRef": [
+            {
+              "ref": "DebugRollingFile"
+            }
+          ]
+        }
+      ],
+      "root": {
+        "level": "debug",
+        "AppenderRef": [
+          {
+            "ref": "DebugRollingFile"
+          }
+        ]
+      }
+    }
+  }
+}

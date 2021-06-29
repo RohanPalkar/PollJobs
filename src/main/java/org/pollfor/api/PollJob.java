@@ -12,9 +12,6 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static org.pollfor.discard.PollDefaults.TIME_INTERVAL;
-import static org.pollfor.discard.PollDefaults.TIME_OUT;
-
 public class PollJob {
 
     private ActionExecutor pollJobExecutor;
@@ -35,7 +32,8 @@ public class PollJob {
         this.name = builder.name;
         this.iterations = builder.iterations;
         this.timeOut = useDefaults ? pollConfig.getTimeOut() : builder.timeOut;
-        this.timeInterval = useDefaults ? pollConfig.getTimeInterval() : builder.timeInterval;
+        this.timeInterval = builder.timeInterval == null ?
+                pollConfig.getTimeInterval() : builder.timeInterval;
 
         this.timeIntervalMillis = this.timeInterval.getUnit().toMillis(this.timeInterval.getValue());
 
@@ -52,8 +50,6 @@ public class PollJob {
         private Integer iterations;
         private TimeValue timeOut;
         private TimeValue timeInterval;
-        private Long timeOutMillis;
-        private Long timeIntervalMillis;
 
         public PollJobBuilder setName(String name){
             this.name = name;

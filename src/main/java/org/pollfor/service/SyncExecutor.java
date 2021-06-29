@@ -1,13 +1,11 @@
 package org.pollfor.service;
 
-import org.pollfor.entities.PollConfig;
 import org.pollfor.api.PollResult;
 import org.pollfor.entities.TimeValue;
 import org.pollfor.sdk.ActionExecutor;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 

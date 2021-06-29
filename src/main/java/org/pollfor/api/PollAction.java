@@ -1,5 +1,7 @@
 package org.pollfor.api;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.pollfor.entities.TimeValue;
 import org.pollfor.service.ServiceType;
 
@@ -11,6 +13,8 @@ import java.util.function.Supplier;
 import static org.pollfor.api.ResultStatus.*;
 
 public class PollAction {
+
+    private static final Logger LOGGER = LogManager.getLogger(PollAction.class);
 
     private final PollJob pollJob;
     private DelayJob delayJob;
@@ -65,6 +69,7 @@ public class PollAction {
         result.setDelayResult(delayResult != null ? delayResult.get(0) : null);
         result.setPollResults(pollResults);
         result.setPollStatus(determineStatus(pollResults));
+        LOGGER.debug("Result: {}", result);
         return result;
     }
 

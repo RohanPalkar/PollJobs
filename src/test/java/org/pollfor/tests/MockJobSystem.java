@@ -6,6 +6,8 @@ import static org.pollfor.common.Utils.println;
 
 public class MockJobSystem implements Callable<String> {
 
+    private static final int iterations = 20;
+    private static final long sleepInterval = 2000L;
     private int counter = 1;
     private String status = "OPEN";
     private Boolean isJobCancelled = false;
@@ -19,7 +21,7 @@ public class MockJobSystem implements Callable<String> {
     }
 
     public synchronized String getStatus(){
-        println("GetStatus: "+status, "TEST","counter:" + String.valueOf(counter));
+        println("GetStatusByPollJob: "+status, "JC:" + counter);
         return status;
     }
 
@@ -36,10 +38,10 @@ public class MockJobSystem implements Callable<String> {
      */
     @Override
     public String call()  {
-        int iterations = 20;
         long start = System.currentTimeMillis();
         for(; counter < iterations && !Thread.interrupted() && !isJobCancelled; ++counter){
-            println("Status : "+status, "TEST","counter:" + counter, isJobCancelled.toString());
+            println("Pre-Status : "+status, "JC:" + counter);
+
             try {
                 if(counter >= 15)
                     status = "COMPLETED";
@@ -47,7 +49,6 @@ public class MockJobSystem implements Callable<String> {
                     status = "IN PROGRESS";
                 else if(counter >= 2)
                     status = "SUBMITTED";
-                long sleepInterval = 2000;
 
                 if(isJobCancelled){
                     println("Cancelling job");
@@ -59,7 +60,7 @@ public class MockJobSystem implements Callable<String> {
             }
             long end = System.currentTimeMillis();
             int seconds = (int) ((end - start) / 1000);
-            println("Status : "+status, "TEST","counter:" + counter, seconds + " sec elapsed", isJobCancelled.toString());
+            println("Post-Status : "+status, "JC:" + counter, seconds + " sec elapsed");
         }
         return status;
     }

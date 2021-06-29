@@ -4,14 +4,14 @@ import java.util.concurrent.TimeUnit;
 
 public class Poll {
 
-    private final String pollName;
+    private static final Poll instance = new Poll();
+    private String pollName;
 
-    public Poll() {
-        this.pollName = null;
-    }
+    private Poll() {}
 
-    public Poll(String pollName) {
-        this.pollName = pollName;
+    public static Poll withName(String pollName){
+        instance.pollName = pollName;
+        return instance;
     }
 
     public PollInterval pollFor(Integer pollTimeOut, TimeUnit pollTimeOutUnit){
