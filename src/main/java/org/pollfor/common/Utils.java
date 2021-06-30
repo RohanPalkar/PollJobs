@@ -27,10 +27,11 @@ public class Utils {
 
         if(d.getSeconds() > 0){
             String format = "${hours}:${minutes}:${seconds}";
+            long secs = d.getSeconds() - ( d.toMinutes() * 60);
             Map<String, String> bindings = new HashMap<String, String>(){{
                 put("hours", String.valueOf(d.toHours()));
                 put("minutes", String.valueOf(d.toMinutes()));
-                put("seconds", String.valueOf(d.getSeconds()));
+                put("seconds", String.valueOf(secs));
             }};
 
             return new StrSubstitutor(bindings).replace(format);
